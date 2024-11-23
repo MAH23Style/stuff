@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Prayer Times">
+    <meta name="keywords" content="hour, date, API, Adhan, Prayer Times, HTML, CSS, JS, JavaScript, API, الاذان, تصميم المواقع, الساعة, التاريخ, تاريخ اليوم, البلدان ابياي, اوقات الصلاة ,البلدان, المدن,">
+    <title>Prayer Times</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="loading">
+        <div class="circle"></div>
+        <div class="text">Loading...</div>
+    </div>
+
+    <div class="bg-img">
+        <img src="img/blue-mosque-istanbul.jpg" alt="Mosque Image">
+        <div class="bg-shadow"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="row">
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo">
+            </div>
+            <div class="open-menu">
+                <span class="line line-1"></span>
+                <span class="line line-2"></span>
+                <span class="line line-3"></span>
+            </div>
+            <ul class="menu">
+                <div class="close-menu">
+                    <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+                </div>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="home">
+                        Home
+                        <div class="separator"></div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="place">
+                        Country
+                        <div class="separator"></div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="prayer-times">
+                        Prayer Times
+                        <div class="separator"></div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../index.html" class="nav-link" data-section="main">
+                        Main Page
+                        <div class="separator"></div>
+                    </a>
+                </li>               
+            </ul>
+        </div>
+    </nav>
+    
+    <section class="section-home" data-section="home">
+        <div class="container">
+            <div class="row">
+                <div class="electronic-watch">
+                    <span></span>
+                </div>
+                <div class="clock">
+                    <div class="num">
+                        <span class="num-1">00</span>
+                        <span class="num-2">03</span>
+                        <span class="num-3">06</span>
+                        <span class="num-4">09</span>
+                    </div>
+                    <div class="hour">
+                        <div class="hr" id="hr"></div>
+                    </div>
+                    <div class="minute">
+                        <div class="mn" id="mn"></div>
+                    </div>
+                    <div class="second">
+                        <div class="sc" id="sc"></div>
+                    </div>
+                </div>
+                <div class="date-new"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-place hidden" id="place" data-section="place">
+        <div class="container">
+            <div class="row">
+                <div class="choice">
+                    <div class="search-country">
+                        <h3 class="choice-country" id="country">Your country</h3>
+                        <input autocomplete="off" type="text" class="input-focus" id="search-country" placeholder="Find your country" onkeyup="searchCountry()">
+                    </div>
+                    <div class="search-city">
+                        <h3 class="choice-city" id="city">Your city</h3>
+                        <input autocomplete="off" type="text" class="input-focus" id="search-city" placeholder="Find your city" onkeyup="searchCity()">
+                    </div>
+                </div>
+                <div class="country-city">
+                    <div class="content-country country-item" id="hidden-country"></div>
+                    <div class="content-city city-item" id="hidden-city"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-prayer-times hidden" id="prayer-times" data-section="prayer-times">
+        <div class="container">
+            <div class="row">
+                <div class="date-day-years">
+                    <p>Choose your country and city</p>
+                </div>
+                <h1>Prayer Times</h1>
+                <div class="prayer-times">
+                    <ul class="prayer">
+                        <li>Imsak</li>
+                        <li>Fajr</li>
+                        <li>Sunrise</li>
+                        <li>Dhuhr</li>
+                        <li>Asr</li>
+                        <li>Sunset</li>
+                        <li>Maghrib</li>
+                        <li>Isha</li>
+                        <li>Midnight</li>
+                    </ul>
+                    <ul class="times">
+                        <li>5:00 AM</li>
+                        <li>5:00 AM</li>
+                        <li>5:00 AM</li>
+                        <li>5:00 AM</li>
+                        <li>5:00 AM</li>
+                        <li>5:00 PM</li>
+                        <li>5:00 PM</li>
+                        <li>7:00 PM</li>
+                        <li>12:00 AM</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="mainPage" class="hidden"></section>
+
+    <script src="scripts.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
