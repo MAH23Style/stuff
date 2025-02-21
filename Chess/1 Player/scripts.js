@@ -50,13 +50,26 @@ function handlePlayerMove(row, col) {
   const algebraicSquare = String.fromCharCode(97 + col) + (8 - row);
 
   if (selectedSquare) {
+    const clickedPiece = game.get(algebraicSquare);
+    if (clickedPiece && clickedPiece.color === "w") {
+      selectedSquare = algebraicSquare;
+      highlightMoves(selectedSquare);
+      return;
+    }
+
     const moveAttempt = {
       from: selectedSquare,
       to: algebraicSquare,
       promotion: "q",
     };
-    const legalMoves = game.moves({ verbose: true }).map((m) => m.from + m.to);
 
+    const piece = game.get(selectedSquare);
+    if (piece && piece.type === "p" && (row === 0 || row === 7)) {
+      showPromotionMenu(row, col);
+      return;
+    }
+
+    const legalMoves = game.moves({ verbose: true }).map((m) => m.from + m.to);
     if (!legalMoves.includes(moveAttempt.from + moveAttempt.to)) {
       if (game.in_check() && game.turn() === "w") {
         statusText.textContent = "Protect your king!";
@@ -74,9 +87,44 @@ function handlePlayerMove(row, col) {
     const piece = game.get(algebraicSquare);
     if (piece && piece.color === "w") {
       selectedSquare = algebraicSquare;
-      highlightMoves(algebraicSquare);
+      highlightMoves(selectedSquare);
     }
   }
+}
+
+function showPromotionMenu(row, col) {
+  const promotionPieces = ["q", "r", "b", "n"];
+  const promotionMenu = document.createElement("div");
+  promotionMenu.style.position = "absolute";
+  promotionMenu.style.backgroundColor = "white";
+  promotionMenu.style.border = "1px solid black";
+  promotionMenu.style.padding = "10px";
+  promotionMenu.style.zIndex = "1000";
+
+  promotionPieces.forEach((piece) => {
+    const pieceButton = document.createElement("button");
+    pieceButton.innerHTML = `<img class='all-img' src="images/${game.turn()}${piece}.png" alt="${piece}">`;
+    pieceButton.style.margin = "5px";
+    pieceButton.addEventListener("click", () => {
+      const moveAttempt = {
+        from: selectedSquare,
+        to: String.fromCharCode(97 + col) + (8 - row),
+        promotion: piece,
+      };
+      const move = game.move(moveAttempt);
+      if (move) {
+        selectedSquare = null;
+        updateBoard();
+      }
+      promotionMenu.remove();
+    });
+    promotionMenu.appendChild(pieceButton);
+  });
+
+  const squareElement = document.querySelector(
+    `[data-row='${row}'][data-col='${col}']`
+  );
+  squareElement.appendChild(promotionMenu);
 }
 
 function highlightMoves(square) {
