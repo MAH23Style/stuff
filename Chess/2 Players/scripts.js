@@ -1,13 +1,11 @@
-// Load chess.js
 const boardElement = document.querySelector(".container ul");
 const statusText = document.getElementById("tog");
 const resetButton = document.getElementById("reset-btn");
 
-const game = new Chess(); // Initialize the chess game
+const game = new Chess();
 
 let selectedSquare = null;
 
-// Function to update the board visually
 function updateBoard() {
   boardElement.innerHTML = "";
   const board = game.board();
@@ -34,36 +32,81 @@ function updateBoard() {
     boardElement.appendChild(rowDiv);
   }
 
-  checkGameStatus(); // Check for checkmate, stalemate, or check
+  checkGameStatus();
   coloring();
 }
 
-// Function to color the board
 function coloring() {
   document.querySelectorAll(".box").forEach((square) => {
     const row = parseInt(square.dataset.row, 10);
     const col = parseInt(square.dataset.col, 10);
     square.style.backgroundColor =
       (row + col) % 2 === 0 ? "rgb(232 235 239)" : "rgb(125 135 150)";
-    square.style.border = "none"; // Reset highlights
+    square.style.border = "none";
   });
 }
 
-// Handle player move selection
-function handlePlayerMove(row, col) {
-  if (game.game_over()) return; // Prevent moves if the game is over
+function showPromotionMenu(row, col) {
+  const promotionPieces = ["q", "r", "b", "n"];
+  const promotionMenu = document.createElement("div");
+  promotionMenu.style.position = "absolute";
+  promotionMenu.style.backgroundColor = "white";
+  promotionMenu.style.border = "1px solid black";
+  promotionMenu.style.padding = "10px";
+  promotionMenu.style.zIndex = "1000";
 
-  const algebraicSquare = String.fromCharCode(97 + col) + (8 - row); // Convert row/col to algebraic notation
+  promotionPieces.forEach((piece) => {
+    const pieceButton = document.createElement("button");
+    pieceButton.innerHTML = `<img class='all-img' src="images/${game.turn()}${piece}.png" alt="${piece}">`;
+    pieceButton.style.margin = "5px";
+    pieceButton.addEventListener("click", () => {
+      const moveAttempt = {
+        from: selectedSquare,
+        to: String.fromCharCode(97 + col) + (8 - row),
+        promotion: piece,
+      };
+      const move = game.move(moveAttempt);
+      if (move) {
+        selectedSquare = null;
+        updateBoard();
+      }
+      promotionMenu.remove();
+    });
+    promotionMenu.appendChild(pieceButton);
+  });
+
+  const squareElement = document.querySelector(
+    `[data-row='${row}'][data-col='${col}']`
+  );
+  squareElement.appendChild(promotionMenu);
+}
+
+function handlePlayerMove(row, col) {
+  if (game.game_over()) return;
+
+  const algebraicSquare = String.fromCharCode(97 + col) + (8 - row);
 
   if (selectedSquare) {
-    // Try to move the selected piece to the clicked square
+    const clickedPiece = game.get(algebraicSquare);
+    if (clickedPiece && clickedPiece.color === game.turn()) {
+      selectedSquare = algebraicSquare;
+      highlightMoves(selectedSquare);
+      return;
+    }
+
     const moveAttempt = {
       from: selectedSquare,
       to: algebraicSquare,
       promotion: "q",
     };
-    const legalMoves = game.moves({ verbose: true }).map((m) => m.from + m.to);
 
+    const piece = game.get(selectedSquare);
+    if (piece && piece.type === "p" && (row === 0 || row === 7)) {
+      showPromotionMenu(row, col);
+      return;
+    }
+
+    const legalMoves = game.moves({ verbose: true }).map((m) => m.from + m.to);
     if (!legalMoves.includes(moveAttempt.from + moveAttempt.to)) {
       if (game.in_check()) {
         statusText.textContent = "Protect your king!";
@@ -73,23 +116,21 @@ function handlePlayerMove(row, col) {
 
     const move = game.move(moveAttempt);
     if (move) {
-      selectedSquare = null; // Deselect after a valid move
+      selectedSquare = null;
       updateBoard();
     } else {
-      selectedSquare = null; // Reset selection if move is invalid
+      selectedSquare = null;
       updateBoard();
     }
   } else {
-    // Select a piece
     const piece = game.get(algebraicSquare);
     if (piece && piece.color === game.turn()) {
       selectedSquare = algebraicSquare;
-      highlightMoves(algebraicSquare);
+      highlightMoves(selectedSquare);
     }
   }
 }
 
-// Highlight legal moves for selected piece
 function highlightMoves(square) {
   document.querySelectorAll(".box").forEach((el) => (el.style.border = "none"));
 
@@ -107,7 +148,6 @@ function highlightMoves(square) {
   });
 }
 
-// Check game status (Checkmate, Stalemate, Check)
 function checkGameStatus() {
   if (game.in_checkmate()) {
     statusText.textContent =
@@ -125,12 +165,10 @@ function checkGameStatus() {
   }
 }
 
-// Reset game
 resetButton.addEventListener("click", () => {
   game.reset();
-  selectedSquare = null; // Ensure no selection remains
+  selectedSquare = null;
   updateBoard();
 });
 
-// Initialize board
 updateBoard();
